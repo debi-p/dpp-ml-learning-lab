@@ -1,0 +1,24 @@
+{
+  "model_id": "dpp-email-classifier-small-v1",
+  "author": "Debi Prasad Pradhan",
+  "phase": 1,
+  "task": "message_classification",
+  "classes": [
+    "work",
+    "personal",
+    "promotion",
+    "spam"
+  ],
+  "tokenization": "word",
+  "vectorization": "bag_of_words",
+  "vocab_size": 1000,
+  "hidden_size": 32,
+  "output_size": 4,
+  "class_weights": {
+    "work": 2.923076923076923,
+    "personal": 0.32784313725490194,
+    "promotion": 15.481481481481481,
+    "spam": 1.841409691629956
+  },
+  "version": "v1"
+}
