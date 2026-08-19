@@ -1,0 +1,657 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Demo Model Visualizer | DPP ML Learning Lab</title>
+  <style>
+    :root {
+      --bg: #07111e;
+      --panel: #0d1b2d;
+      --panel-2: #10233a;
+      --ink: #edf7ff;
+      --muted: #9fb2c5;
+      --line: rgba(148, 189, 218, 0.24);
+      --blue: #38bdf8;
+      --violet: #a78bfa;
+      --pink: #fb7185;
+      --green: #34d399;
+      --amber: #fbbf24;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 18% 20%, rgba(56, 189, 248, 0.16), transparent 28%),
+        radial-gradient(circle at 74% 72%, rgba(167, 139, 250, 0.15), transparent 32%),
+        var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.45;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page {
+      width: min(1260px, calc(100% - 36px));
+      margin: 0 auto;
+    }
+
+    header {
+      padding: 28px 0 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .logo {
+      width: 48px;
+      height: 48px;
+      border: 1px solid rgba(56, 189, 248, 0.55);
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: rgba(56, 189, 248, 0.12);
+      color: var(--blue);
+      font-weight: 900;
+      box-shadow: 0 0 34px rgba(56, 189, 248, 0.18);
+    }
+
+    h1 {
+      font-size: clamp(28px, 4vw, 48px);
+      line-height: 1;
+      margin: 0;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin: 6px 0 0;
+      font-size: 16px;
+    }
+
+    .back-link {
+      color: var(--muted);
+      border: 1px solid var(--line);
+      padding: 10px 13px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.04);
+      font-weight: 800;
+    }
+
+    .notice {
+      border: 1px solid rgba(52, 211, 153, 0.35);
+      background: rgba(52, 211, 153, 0.08);
+      color: #c7ffe6;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin: 8px 0 18px;
+      font-weight: 700;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      padding: 14px;
+      border: 1px solid var(--line);
+      background: rgba(13, 27, 45, 0.78);
+      border-radius: 14px;
+      backdrop-filter: blur(10px);
+    }
+
+    select,
+    button,
+    input {
+      color: var(--ink);
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      min-height: 42px;
+      padding: 0 13px;
+      font: inherit;
+      font-weight: 800;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    button.active,
+    button.primary {
+      border-color: rgba(56, 189, 248, 0.72);
+      background: rgba(56, 189, 248, 0.2);
+      box-shadow: 0 0 24px rgba(56, 189, 248, 0.12);
+    }
+
+    .speed {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-weight: 800;
+      margin-left: auto;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .metric {
+      background: rgba(13, 27, 45, 0.76);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px;
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 900;
+      margin-bottom: 7px;
+    }
+
+    .metric strong {
+      font-size: 20px;
+    }
+
+    .stage {
+      min-height: 540px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(56, 189, 248, 0.22);
+      border-radius: 18px;
+      background:
+        linear-gradient(rgba(148, 189, 218, 0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(148, 189, 218, 0.055) 1px, transparent 1px),
+        linear-gradient(135deg, rgba(8, 18, 31, 0.98), rgba(17, 19, 42, 0.98));
+      background-size: 48px 48px, 48px 48px, auto;
+      box-shadow: inset 0 0 80px rgba(56, 189, 248, 0.06), 0 24px 70px rgba(0, 0, 0, 0.28);
+      margin-bottom: 16px;
+    }
+
+    svg {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      inset: 0;
+    }
+
+    .node {
+      position: absolute;
+      width: 150px;
+      min-height: 90px;
+      border: 1px solid rgba(148, 189, 218, 0.32);
+      border-radius: 14px;
+      background: rgba(13, 27, 45, 0.9);
+      display: grid;
+      align-content: center;
+      gap: 6px;
+      padding: 14px;
+      box-shadow: 0 0 24px rgba(56, 189, 248, 0.09);
+      transition: transform 260ms ease, border-color 260ms ease, box-shadow 260ms ease, background 260ms ease;
+      z-index: 2;
+    }
+
+    .node.active {
+      transform: translateY(-6px) scale(1.04);
+      border-color: var(--blue);
+      background: rgba(18, 43, 70, 0.96);
+      box-shadow: 0 0 34px rgba(56, 189, 248, 0.32);
+    }
+
+    .node.done {
+      border-color: rgba(52, 211, 153, 0.45);
+    }
+
+    .node h3 {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.1;
+    }
+
+    .node p {
+      margin: 0;
+      color: var(--muted);
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .packet {
+      position: absolute;
+      z-index: 4;
+      color: var(--ink);
+      background: linear-gradient(135deg, var(--blue), var(--violet));
+      border-radius: 999px;
+      padding: 8px 11px;
+      font-weight: 900;
+      font-size: 12px;
+      box-shadow: 0 0 28px rgba(56, 189, 248, 0.45);
+      opacity: 0;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .details {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 36px;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      background: rgba(13, 27, 45, 0.78);
+      border-radius: 14px;
+      padding: 16px;
+      min-height: 190px;
+    }
+
+    .panel h2 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+
+    .panel pre {
+      margin: 0;
+      white-space: pre-wrap;
+      color: #d8eaff;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .legend {
+      color: var(--muted);
+      padding-bottom: 32px;
+    }
+
+    @media (max-width: 940px) {
+      header,
+      .controls {
+        align-items: flex-start;
+      }
+
+      header {
+        flex-direction: column;
+      }
+
+      .summary,
+      .details {
+        grid-template-columns: 1fr;
+      }
+
+      .stage {
+        min-height: 760px;
+      }
+
+      .speed {
+        margin-left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="page">
+    <div class="brand">
+      <div class="logo">N</div>
+      <div>
+        <h1>Demo Model Visualizer</h1>
+        <p class="subtitle">Static GitHub Pages demo: no localhost, no API, no backend required.</p>
+      </div>
+    </div>
+    <a class="back-link" href="./index.html">Back to Learning Lab</a>
+  </header>
+
+  <main class="page">
+    <div class="notice">
+      Demo Mode only. This page uses embedded sample data from the email classifier to show the neural-network flow.
+    </div>
+
+    <section class="controls" aria-label="Demo controls">
+      <select id="modelSelect" aria-label="Select demo model">
+        <option value="email">dpp-email-classifier-small-v1</option>
+      </select>
+      <button id="prevBtn" type="button">Previous</button>
+      <button id="playBtn" class="primary" type="button">Play</button>
+      <button id="pauseBtn" type="button">Pause</button>
+      <button id="nextBtn" type="button">Next</button>
+      <button id="replayBtn" type="button">Replay</button>
+      <div class="speed">
+        <span>Speed</span>
+        <input id="speed" type="range" min="350" max="1800" value="900" step="50" aria-label="Animation speed">
+      </div>
+    </section>
+
+    <section class="summary" aria-label="Current demo summary">
+      <div class="metric"><span>Prediction</span><strong id="prediction">Work Email</strong></div>
+      <div class="metric"><span>Vector Shape</span><strong>1 x 1000</strong></div>
+      <div class="metric"><span>Hidden Layer</span><strong>32 neurons</strong></div>
+      <div class="metric"><span>Output</span><strong>4 classes</strong></div>
+    </section>
+
+    <section class="stage" id="stage" aria-label="Cinematic model flow">
+      <svg viewBox="0 0 1180 540" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="forward" x1="0%" x2="100%">
+            <stop offset="0%" stop-color="#38bdf8"></stop>
+            <stop offset="55%" stop-color="#34d399"></stop>
+            <stop offset="100%" stop-color="#a78bfa"></stop>
+          </linearGradient>
+          <linearGradient id="backward" x1="100%" x2="0%">
+            <stop offset="0%" stop-color="#fb7185"></stop>
+            <stop offset="100%" stop-color="#fbbf24"></stop>
+          </linearGradient>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="3" result="blur"></feGaussianBlur>
+            <feMerge>
+              <feMergeNode in="blur"></feMergeNode>
+              <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+          </filter>
+        </defs>
+        <g id="paths"></g>
+      </svg>
+      <div class="packet" id="packet">raw text</div>
+      <div id="nodes"></div>
+    </section>
+
+    <section class="details">
+      <div class="panel">
+        <h2>Input</h2>
+        <pre id="inputPanel"></pre>
+      </div>
+      <div class="panel">
+        <h2>Algorithm</h2>
+        <pre id="algorithmPanel"></pre>
+      </div>
+      <div class="panel">
+        <h2>Output</h2>
+        <pre id="outputPanel"></pre>
+      </div>
+    </section>
+
+    <p class="legend">
+      This page is meant for GitHub Pages. The fully live version remains in <code>model_flow_visualizer</code> and needs the local API only when running on your laptop.
+    </p>
+  </main>
+
+  <script>
+    const stages = [
+      {
+        id: "input",
+        title: "Input Message",
+        subtitle: "raw text",
+        x: 70,
+        y: 180,
+        input: "User enters:\nCan we review the project deadline tomorrow?",
+        algorithm: "Receive raw message.\nNo learning happens yet.",
+        output: "Raw text ready for preprocessing.",
+        packet: "raw text",
+      },
+      {
+        id: "tokenize",
+        title: "Word Tokenization",
+        subtitle: "7 tokens",
+        x: 250,
+        y: 180,
+        input: "Can we review the project deadline tomorrow?",
+        algorithm: "Lowercase + regex cleanup + split into words.",
+        output: "can\nwe\nreview\nthe\nproject\ndeadline\ntomorrow",
+        packet: "tokens",
+      },
+      {
+        id: "vocab",
+        title: "Vocabulary Lookup",
+        subtitle: "known words",
+        x: 430,
+        y: 180,
+        input: "7 word tokens",
+        algorithm: "Match each token against the trained vocabulary.",
+        output: "Matched:\nthe, can, we, tomorrow, project",
+        packet: "word indexes",
+      },
+      {
+        id: "vector",
+        title: "Vectorization",
+        subtitle: "1 x 1000",
+        x: 610,
+        y: 180,
+        input: "Matched vocabulary words",
+        algorithm: "Bag-of-Words count vector.",
+        output: "the: 1\ncan: 1\nwe: 1\ntomorrow: 1\nproject: 1",
+        packet: "X vector",
+      },
+      {
+        id: "hidden",
+        title: "Hidden Layer 1",
+        subtitle: "32 neurons",
+        x: 790,
+        y: 180,
+        input: "X shape: 1 x 1000",
+        algorithm: "Z1 = XW1 + b1",
+        output: "z1: 0.031\nz2: -0.075\nz3: 0.213\n...\nz32: 0.099",
+        packet: "Z1 values",
+      },
+      {
+        id: "relu",
+        title: "ReLU Activation",
+        subtitle: "1 x 32",
+        x: 970,
+        y: 180,
+        input: "Hidden weighted sums Z1",
+        algorithm: "A1 = max(0, Z1)",
+        output: "Negative values become 0.\nPositive values pass through.",
+        packet: "A1 values",
+      },
+      {
+        id: "output",
+        title: "Output Layer 2",
+        subtitle: "4 scores",
+        x: 970,
+        y: 350,
+        input: "A1 shape: 1 x 32",
+        algorithm: "Z2 = A1W2 + b2",
+        output: "work: 0.982\npersonal: 0.803\npromotion: -0.675\nspam: -1.245",
+        packet: "scores",
+      },
+      {
+        id: "softmax",
+        title: "Softmax",
+        subtitle: "probabilities",
+        x: 790,
+        y: 350,
+        input: "4 output scores",
+        algorithm: "Exponentiate and normalize scores so they sum to 1.",
+        output: "work: 46.8%\npersonal: 39.2%\npromotion: 8.9%\nspam: 5.1%",
+        packet: "probability",
+      },
+      {
+        id: "loss",
+        title: "Loss Check",
+        subtitle: "cross-entropy",
+        x: 610,
+        y: 350,
+        input: "Prediction: work\nExpected: work",
+        algorithm: "Cross-entropy compares prediction with expected label.",
+        output: "Loss: 0.758\nLower is better.",
+        packet: "loss",
+      },
+      {
+        id: "backprop",
+        title: "Backpropagation",
+        subtitle: "gradients",
+        x: 430,
+        y: 350,
+        input: "Loss value",
+        algorithm: "Use chain rule to calculate gradients for W2, b2, W1, b1.",
+        output: "dW2: 32 x 4\ndb2: 4\ndW1: 1000 x 32\ndb1: 32",
+        packet: "gradients",
+      },
+      {
+        id: "update",
+        title: "Weight Update",
+        subtitle: "learning",
+        x: 250,
+        y: 350,
+        input: "Current weights + gradients",
+        algorithm: "W = W - learning_rate * dW\nb = b - learning_rate * db",
+        output: "Updated weights are ready for the next training row.",
+        packet: "updated weights",
+      },
+    ];
+
+    const edges = [
+      ["input", "tokenize", "forward"],
+      ["tokenize", "vocab", "forward"],
+      ["vocab", "vector", "forward"],
+      ["vector", "hidden", "forward"],
+      ["hidden", "relu", "forward"],
+      ["relu", "output", "forward"],
+      ["output", "softmax", "forward"],
+      ["softmax", "loss", "forward"],
+      ["loss", "backprop", "backward"],
+      ["backprop", "update", "backward"],
+    ];
+
+    const nodesEl = document.querySelector("#nodes");
+    const pathsEl = document.querySelector("#paths");
+    const packetEl = document.querySelector("#packet");
+    const inputPanel = document.querySelector("#inputPanel");
+    const algorithmPanel = document.querySelector("#algorithmPanel");
+    const outputPanel = document.querySelector("#outputPanel");
+    const speed = document.querySelector("#speed");
+    let current = 0;
+    let timer = null;
+
+    function renderNodes() {
+      nodesEl.innerHTML = "";
+      for (const stage of stages) {
+        const node = document.createElement("div");
+        node.className = "node";
+        node.id = `node-${stage.id}`;
+        node.style.left = `${stage.x}px`;
+        node.style.top = `${stage.y}px`;
+        node.innerHTML = `<h3>${stage.title}</h3><p>${stage.subtitle}</p>`;
+        node.addEventListener("click", () => {
+          pause();
+          showStage(stages.indexOf(stage));
+        });
+        nodesEl.append(node);
+      }
+    }
+
+    function renderPaths() {
+      pathsEl.innerHTML = "";
+      for (const [from, to, direction] of edges) {
+        const a = stages.find((stage) => stage.id === from);
+        const b = stages.find((stage) => stage.id === to);
+        const ax = a.x + 150;
+        const ay = a.y + 45;
+        const bx = b.x;
+        const by = b.y + 45;
+        const mid = (ax + bx) / 2;
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", `M ${ax} ${ay} C ${mid} ${ay}, ${mid} ${by}, ${bx} ${by}`);
+        path.setAttribute("fill", "none");
+        path.setAttribute("stroke", direction === "backward" ? "url(#backward)" : "url(#forward)");
+        path.setAttribute("stroke-width", "3");
+        path.setAttribute("opacity", "0.56");
+        path.setAttribute("filter", "url(#glow)");
+        pathsEl.append(path);
+      }
+    }
+
+    function showStage(index) {
+      current = Math.max(0, Math.min(index, stages.length - 1));
+      const stage = stages[current];
+      for (let i = 0; i < stages.length; i++) {
+        const node = document.querySelector(`#node-${stages[i].id}`);
+        node.classList.toggle("active", i === current);
+        node.classList.toggle("done", i < current);
+      }
+      inputPanel.textContent = stage.input;
+      algorithmPanel.textContent = stage.algorithm;
+      outputPanel.textContent = stage.output;
+      movePacket(stage);
+    }
+
+    function movePacket(stage) {
+      packetEl.textContent = stage.packet;
+      packetEl.style.transition = "none";
+      packetEl.style.opacity = "0";
+      packetEl.style.left = `${stage.x + 75}px`;
+      packetEl.style.top = `${stage.y - 12}px`;
+      requestAnimationFrame(() => {
+        packetEl.style.transition = "opacity 220ms ease, left 480ms ease, top 480ms ease";
+        packetEl.style.opacity = "1";
+        packetEl.style.left = `${stage.x + 75}px`;
+        packetEl.style.top = `${stage.y + 108}px`;
+      });
+    }
+
+    function next() {
+      showStage(current + 1 >= stages.length ? 0 : current + 1);
+    }
+
+    function previous() {
+      showStage(current - 1 < 0 ? stages.length - 1 : current - 1);
+    }
+
+    function play() {
+      pause();
+      timer = setInterval(next, Number(speed.value));
+      document.querySelector("#playBtn").classList.add("active");
+    }
+
+    function pause() {
+      if (timer) clearInterval(timer);
+      timer = null;
+      document.querySelector("#playBtn").classList.remove("active");
+    }
+
+    document.querySelector("#nextBtn").addEventListener("click", () => {
+      pause();
+      next();
+    });
+    document.querySelector("#prevBtn").addEventListener("click", () => {
+      pause();
+      previous();
+    });
+    document.querySelector("#playBtn").addEventListener("click", play);
+    document.querySelector("#pauseBtn").addEventListener("click", pause);
+    document.querySelector("#replayBtn").addEventListener("click", () => {
+      pause();
+      showStage(0);
+      play();
+    });
+    speed.addEventListener("input", () => {
+      if (timer) play();
+    });
+
+    renderNodes();
+    renderPaths();
+    showStage(0);
+  </script>
+</body>
+</html>

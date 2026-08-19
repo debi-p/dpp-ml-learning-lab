@@ -1,0 +1,67 @@
+{
+  "models": [
+    {
+      "model_id": "dpp-email-classifier-small-v1",
+      "phase": 1,
+      "type": "email_classifier_from_scratch",
+      "path": "../01_foundational_neural_network/models/dpp-email-classifier-small-v1",
+      "supports": [
+        "predict",
+        "inspect_forward",
+        "inspect_training_step"
+      ]
+    },
+    {
+      "model_id": "dpp-gita-search-assistant-v1",
+      "phase": 2,
+      "type": "gita_search_assistant_from_scratch",
+      "path": "../02_gita_ai_models/models/dpp-gita-search-assistant-v1",
+      "supports": [
+        "predict"
+      ]
+    },
+    {
+      "model_id": "dpp-gita-embedding-small-v1",
+      "phase": 2,
+      "type": "gita_embedding_from_scratch",
+      "path": "../02_gita_ai_models/models/dpp-gita-embedding-small-v1",
+      "supports": [
+        "predict"
+      ]
+    },
+    {
+      "model_id": "dpp-gita-rag-assistant-v2",
+      "phase": 2,
+      "type": "gita_rag_assistant_from_scratch",
+      "path": "../02_gita_ai_models/models/dpp-gita-embedding-small-v1",
+      "retriever_model_id": "dpp-gita-embedding-small-v1",
+      "supports": [
+        "predict",
+        "inspect_rag"
+      ]
+    },
+    {
+      "model_id": "dpp-gita-tiny-transformer-v1",
+      "phase": 2,
+      "type": "gita_tiny_transformer_from_scratch",
+      "path": "../02_gita_ai_models/models/dpp-gita-tiny-transformer-v1",
+      "supports": [
+        "predict",
+        "inspect_transformer"
+      ]
+    },
+    {
+      "model_id": "dpp-gita-rag-transformer-v1",
+      "phase": 2,
+      "type": "gita_rag_transformer_from_scratch",
+      "embedding_model_path": "../02_gita_ai_models/models/dpp-gita-embedding-small-v1",
+      "transformer_model_path": "../02_gita_ai_models/models/dpp-gita-tiny-transformer-v1",
+      "retriever_model_id": "dpp-gita-embedding-small-v1",
+      "generator_model_id": "dpp-gita-tiny-transformer-v1",
+      "supports": [
+        "predict",
+        "inspect_rag_transformer"
+      ]
+    }
+  ]
+}

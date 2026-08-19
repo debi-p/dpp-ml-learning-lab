@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Neural Insight Studio</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="studio-header">
+      <div class="brand-lockup">
+        <div class="studio-logo" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none">
+            <path d="M7 16h6m6 0h6M13 16a3 3 0 1 0 6 0 3 3 0 0 0-6 0Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            <path d="M8 9c5 0 5 4 8 4s3-4 8-4M8 23c5 0 5-4 8-4s3 4 8 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity=".75" />
+          </svg>
+        </div>
+        <div>
+          <h1>Neural Insight Studio</h1>
+          <p>Transparent model training and inference flow for learning how neural networks work internally.</p>
+        </div>
+      </div>
+      <div class="api-status" id="apiStatus">API not checked</div>
+    </header>
+
+    <section class="studio-controls">
+      <input id="apiBase" value="http://127.0.0.1:8010" aria-label="API Base URL" hidden />
+      <select id="modelSelect" aria-label="Select model"></select>
+      <div class="mode-toggle" aria-label="Visualizer mode">
+        <button id="inspectTrainingBtn" class="mode-button active" type="button">Training Mode</button>
+        <button id="inspectForwardBtn" class="mode-button" type="button">Ask Mode</button>
+      </div>
+      <div class="training-input-panel" id="trainingInputPanel" hidden></div>
+      <div class="ask-input-panel" id="askInputPanel" hidden>
+        <label for="messageInput">Ask the model</label>
+        <textarea id="messageInput" rows="2" aria-label="Ask message" placeholder="Type a message to classify">Can we review the project deadline tomorrow?</textarea>
+      </div>
+      <div class="internal-controls" hidden>
+        <select id="correctLabel" aria-label="Expected category">
+        <option>work</option>
+        <option>personal</option>
+        <option>promotion</option>
+        <option>spam</option>
+        </select>
+        <input id="learningRate" type="number" value="0.1" min="0.001" max="1" step="0.001" aria-label="Learning rate" />
+      </div>
+    </section>
+
+    <main class="layout">
+
+      <section class="content">
+        <section class="summary-band" id="summaryBand">
+          <div>
+            <span class="label">Prediction</span>
+            <strong id="predictionValue">Waiting</strong>
+          </div>
+          <div>
+            <span class="label">Vector Shape</span>
+            <strong id="vectorShape">-</strong>
+          </div>
+          <div>
+            <span class="label">Hidden Shape</span>
+            <strong id="hiddenShape">-</strong>
+          </div>
+          <div>
+            <span class="label">Loss</span>
+            <strong id="lossValue">-</strong>
+          </div>
+        </section>
+
+        <section class="runtime-state" hidden>
+          <strong id="stageTitle">Waiting for inspection</strong>
+          <p id="stageDescription">Run a forward pass or training step to watch the model process data.</p>
+          <div class="flow-lane" id="flowLane">
+            <span>Input</span>
+            <span>Tokenize</span>
+            <span>Vocabulary</span>
+            <span>Vectorize</span>
+            <span>Hidden</span>
+            <span>ReLU</span>
+            <span>Output</span>
+            <span>Softmax</span>
+            <span>Loss</span>
+            <span>Backprop</span>
+          </div>
+        </section>
+
+        <section class="playback-panel" aria-label="Playback controls">
+          <span class="pill active">Dataset: Built-in Email Dataset</span>
+          <button id="previousBtn" type="button" aria-label="Previous">‹</button>
+          <button id="playBtn" type="button" aria-label="Play">▶</button>
+          <button id="pauseBtn" type="button" aria-label="Pause">Ⅱ</button>
+          <button id="nextBtn" type="button" aria-label="Next">›</button>
+          <button id="replayBtn" type="button" aria-label="Replay">↻</button>
+          <span class="pill">Speed</span>
+          <input id="speedControl" type="range" min="1" max="5" value="2" step="1" aria-label="Playback speed" />
+          <span class="hint" id="speedLabel">Slow</span>
+        </section>
+
+        <section class="neural-cinema" aria-label="Cinematic neural data flow">
+          <svg id="flowSvg" viewBox="0 0 1500 520" role="img">
+            <defs>
+              <filter id="softGlow" x="-40%" y="-40%" width="180%" height="180%">
+                <feGaussianBlur stdDeviation="4" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+              <linearGradient id="forwardGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#38bdf8" />
+                <stop offset="55%" stop-color="#22c55e" />
+                <stop offset="100%" stop-color="#a78bfa" />
+              </linearGradient>
+              <linearGradient id="backwardGradient" x1="100%" y1="0%" x2="0%" y2="0%">
+                <stop offset="0%" stop-color="#fb7185" />
+                <stop offset="55%" stop-color="#f59e0b" />
+                <stop offset="100%" stop-color="#38bdf8" />
+              </linearGradient>
+            </defs>
+
+            <g class="connection-layer" id="connectionLayer"></g>
+            <g class="particle-layer" id="particleLayer"></g>
+          </svg>
+          <div class="cinema-readout">
+            <div>
+              <span class="label">Box Input</span>
+              <pre id="boxInput">Waiting for data...</pre>
+            </div>
+            <div>
+              <span class="label">Algorithm</span>
+              <pre id="boxAlgorithm">Waiting for data...</pre>
+            </div>
+            <div>
+              <span class="label">Box Output</span>
+              <pre id="boxOutput">Waiting for data...</pre>
+            </div>
+          </div>
+        </section>
+
+        <section class="teaching-cards">
+          <article>
+            <h2>Dataset</h2>
+            <pre id="datasetCard">Input: built-in email dataset
+Source: spam and ham emails
+Output: expected category
+Categories: Spam Email, Personal Email, Work Email, Promotional Email</pre>
+          </article>
+          <article>
+            <h2 id="modeTitle">Training Mode</h2>
+            <pre id="modeCard">Each row flows through the model
+Model predicts an email category
+Loss checks prediction vs expected category
+Backpropagation updates weights for training rows</pre>
+          </article>
+        </section>
+
+        <section class="gita-trace-panel" id="gitaTracePanel" hidden>
+          <article>
+            <h2 id="gitaTraceTitle">Gita Trace</h2>
+            <div class="trace-columns">
+              <div>
+                <span class="label">Retrieved Sources</span>
+                <div class="source-list" id="gitaSourceList"></div>
+              </div>
+              <div>
+                <span class="label">Generated / Final Answer</span>
+                <pre id="gitaAnswerText">Waiting for model output...</pre>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <section class="step-grid">
+          <article class="step" data-stage="tokens">
+            <h2>1. Tokenization</h2>
+            <p class="step-meta" id="cleanedText">Cleaned text appears here.</p>
+            <div class="token-list" id="tokenList"></div>
+          </article>
+
+          <article class="step" data-stage="vector">
+            <h2>2. Vectorization</h2>
+            <p class="step-meta" id="vectorMeta">Bag-of-Words features appear here.</p>
+            <div class="feature-list" id="featureList"></div>
+          </article>
+
+          <article class="step wide" data-stage="forward">
+            <h2>3. Forward Propagation</h2>
+            <div class="layer-row">
+              <div>
+                <h3>Hidden Layer Z1</h3>
+                <div class="bar-list" id="hiddenBars"></div>
+              </div>
+              <div>
+                <h3>ReLU Activation A1</h3>
+                <div class="bar-list" id="activationBars"></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="step" data-stage="scores">
+            <h2>4. Output Scores</h2>
+            <div class="score-list" id="scoreList"></div>
+          </article>
+
+          <article class="step" data-stage="softmax">
+            <h2>5. Softmax</h2>
+            <div class="probability-list" id="probabilityList"></div>
+          </article>
+
+          <article class="step wide training-only" data-stage="backprop">
+            <h2>6. Backpropagation</h2>
+            <p class="step-meta" id="backpropMeta">Run training-step inspection to see gradients.</p>
+            <div class="gradient-grid" id="gradientGrid"></div>
+          </article>
+
+          <article class="step wide training-only" data-stage="update">
+            <h2>7. Weight Update Preview</h2>
+            <p class="step-meta" id="updateMeta">Run training-step inspection to see before and after values.</p>
+            <div class="code-grid">
+              <pre id="beforeWeights">{}</pre>
+              <pre id="afterWeights">{}</pre>
+            </div>
+          </article>
+        </section>
+      </section>
+    </main>
+
+    <script src="app.js?v=20260818-gita-rag-transformer-ui"></script>
+  </body>
+</html>
