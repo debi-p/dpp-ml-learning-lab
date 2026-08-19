@@ -1,0 +1,12 @@
+{
+  "model_id": "dpp-gita-tiny-transformer-v1",
+  "max_texts": 100,
+  "max_vocab_size": 1000,
+  "context_length": 16,
+  "d_model": 32,
+  "hidden_size": 64,
+  "epochs": 4,
+  "batch_size": 16,
+  "learning_rate": 0.04,
+  "seed": 42
+}

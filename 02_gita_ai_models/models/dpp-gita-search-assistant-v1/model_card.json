@@ -1,0 +1,7 @@
+{
+  "model_id": "dpp-gita-search-assistant-v1",
+  "type": "gita_search_assistant_from_scratch",
+  "vocabulary_size": 5000,
+  "verse_count": 698,
+  "algorithm": "TF-IDF + cosine similarity + template answer builder"
+}

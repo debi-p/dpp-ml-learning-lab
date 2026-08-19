@@ -1,0 +1,18 @@
+{
+  "model_id": "dpp-gita-tiny-transformer-v1",
+  "type": "tiny_transformer_from_scratch",
+  "algorithm": "token embeddings + positional embeddings + causal self-attention + feed-forward + next-token cross-entropy",
+  "pretrained_model_used": false,
+  "metrics": {
+    "training_texts": 100,
+    "training_examples": 20690,
+    "vocabulary_size": 1000,
+    "losses": [
+      6.002469516596967,
+      5.299187870654753,
+      5.259128989769213,
+      5.253488162792256
+    ],
+    "final_loss": 5.253488162792256
+  }
+}
