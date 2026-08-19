@@ -12,6 +12,16 @@ common neural network architecture
 -> common API, registry, testing UI, and visualizer
 ```
 
+## Common Neural Network Architecture
+
+This is the main mental model for the whole repository: data enters, becomes tokens and vectors, passes through layers, produces output probabilities, calculates loss, then updates weights through backpropagation.
+
+![End-to-End Neural Network Transformer Flow](./00_neural_network_common_architecture/hld.png)
+
+Additional architecture reference:
+
+![Neural Network Architecture Reference](./00_neural_network_common_architecture/hld1.png)
+
 ## Main Folders
 
 - `00_neural_network_common_architecture` - Common neural network and transformer architecture diagrams.
