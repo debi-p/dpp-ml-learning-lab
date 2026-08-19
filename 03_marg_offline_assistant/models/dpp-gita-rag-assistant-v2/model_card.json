@@ -1,0 +1,20 @@
+{
+  "model_id": "dpp-gita-embedding-small-v1",
+  "type": "neural_embedding_from_scratch",
+  "algorithm": "token embedding + mean pooling + dense projection + triplet loss",
+  "pretrained_model_used": false,
+  "metrics": {
+    "training_rows": 10000,
+    "verse_rows": 698,
+    "vocabulary_size": 8000,
+    "losses": [
+      0.02135416133403778,
+      0.0018184254303574563,
+      0.00099165930300951,
+      0.00040833953619003293,
+      0.00020248194336891173,
+      0.00020870480835437775
+    ],
+    "final_loss": 0.00020870480835437775
+  }
+}

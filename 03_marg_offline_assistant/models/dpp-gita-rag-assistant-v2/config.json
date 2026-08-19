@@ -1,0 +1,11 @@
+{
+  "model_id": "dpp-gita-embedding-small-v1",
+  "max_length": 48,
+  "max_vocab_size": 8000,
+  "token_dim": 32,
+  "output_dim": 64,
+  "epochs": 6,
+  "learning_rate": 0.03,
+  "margin": 0.25,
+  "seed": 42
+}
